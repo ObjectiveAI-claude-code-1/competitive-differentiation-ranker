@@ -1,6 +1,6 @@
 {
   "type": "vector.function",
-  "description": "Evaluate startup ideas for relative competitive differentiation. Produces a probability distribution (scores summing to ~1) representing each idea's differentiation share. Evaluates uniqueness, defensibility, positioning, and pivot barriers. Accepts text, image, audio, video, or composite pitches.",
+  "description": "Rank startup ideas by relative competitive differentiation. Evaluates uniqueness, defensibility, positioning, and pivot barriers across a set of ideas, producing a probability distribution where higher scores indicate stronger relative differentiation. Accepts 2+ startup ideas in text, image, audio, video, or composite formats.",
   "input_schema": {
     "type": "object",
     "description": "A batch of startup ideas to evaluate for relative competitive differentiation",
