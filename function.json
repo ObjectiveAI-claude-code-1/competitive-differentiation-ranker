@@ -1,6 +1,6 @@
 {
   "type": "vector.function",
-  "description": "Evaluate a batch of startup ideas for relative competitive differentiation. Produces a probability distribution (scores summing to ~1) where each score represents the idea's share of total differentiation value. Higher scores indicate ideas that occupy more unique, defensible, and strategically distinct positions relative to others in the batch. Evaluates four dimensions: relative uniqueness (conceptual territory), defensibility (moats and barriers), competitive positioning (clarity and coherence), and pivot barriers (how hard for others to enter this space). Accepts text, image, audio, video, or composite pitches.",
+  "description": "Evaluate startup ideas for relative competitive differentiation. Produces a probability distribution (scores summing to ~1) representing each idea's differentiation share. Evaluates uniqueness, defensibility, positioning, and pivot barriers. Accepts text, image, audio, video, or composite pitches.",
   "input_schema": {
     "type": "object",
     "description": "A batch of startup ideas to evaluate for relative competitive differentiation",
