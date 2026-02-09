@@ -1,224 +1,322 @@
-# Competitive Differentiation Ranker - Tasks
+# Competitive Differentiation Ranker: Task Definitions
 
-This document describes the key tasks the Competitive Differentiation Ranker function must perform. Each task evaluates a specific dimension of competitive differentiation across all startup ideas in the input set, contributing to the final probability distribution output.
+This document defines the key tasks that the Competitive Differentiation Ranker function must perform. Each task evaluates a specific dimension of competitive differentiation across all startup ideas in the input batch, contributing to the final probability distribution output.
+
+The function is a **vector function** that takes an array of startup ideas (each potentially multimodal: text, image, audio, video, or composite) and produces a vector of scores summing to ~1, representing relative differentiation.
 
 ---
 
 ## Task 1: Conceptual Territory Mapping
 
-**Purpose**: Identify the conceptual space each idea occupies and detect overlaps between ideas in the set.
+**Purpose:** Identify what conceptual space each startup idea occupies and measure the distance between ideas.
 
-**Evaluation Focus**:
-- What problem domain does each idea address?
-- How does each idea frame its problem (novel framing vs. conventional framing)?
-- Which ideas sit at unexplored intersections of domains?
-- Which ideas challenge existing paradigms vs. accept industry orthodoxy?
-- Which ideas occupy the same conceptual territory and would be seen as substitutes?
+**Description:** Evaluate all startup ideas simultaneously to determine their conceptual positions. For each idea, identify the core problem domain, solution approach, target market, and strategic framing. Then assess how conceptually distant each idea is from all others in the batch.
 
-**Output**: For each idea, assess whether it occupies unique conceptual territory relative to the other ideas in the set. Ideas that cluster together should share uniqueness credit; ideas that stand alone should receive full uniqueness credit.
+**What to Consider:**
+- What problem domain does each idea address? (healthcare, fintech, productivity, social, etc.)
+- What is the core solution approach? (AI/ML, marketplace, SaaS, hardware, etc.)
+- Who is the target customer? (enterprise, SMB, consumer, specific verticals)
+- How is the idea framed and positioned? (what category does it claim?)
+- How far is each idea from the "centroid" of all ideas in the batch?
+- Are there clusters of similar ideas, with some ideas isolated?
 
----
-
-## Task 2: Network Effect Potential Assessment
-
-**Purpose**: Evaluate the potential for network effects—where the product becomes more valuable as more people use it.
-
-**Evaluation Focus**:
-- Does the idea have potential for direct network effects (each user increases value for others)?
-- Does it have potential for indirect network effects (users attract complementors)?
-- Does it have potential for data network effects (more users = better product through ML/AI)?
-- How strong are these network effects relative to other ideas in the set?
-- Which ideas lack any network effect potential?
-
-**Output**: Comparative ranking of network effect potential across all ideas in the set.
+**Evaluation Goal:** Ideas that occupy unique conceptual territory—far from other ideas in the batch—should receive higher relative scores. Ideas clustered with others should share their differentiation value.
 
 ---
 
-## Task 3: Data Moat Evaluation
+## Task 2: Problem Novelty Assessment
 
-**Purpose**: Assess whether each idea would generate proprietary, defensible data assets.
+**Purpose:** Evaluate whether each idea addresses a novel problem compared to others in the batch.
 
-**Evaluation Focus**:
-- Would the idea accumulate data that is hard to replicate?
-- Is the data compounding (each data point increases value of existing data)?
-- Is the data defensible (can't be scraped, purchased, or reverse-engineered)?
-- How does each idea's data moat potential compare to others in the set?
-- Which ideas would operate with commodity data only?
+**Description:** Compare the problems being solved across all ideas. Some ideas may tackle well-known problems (scheduling, payments, messaging) while others address emerging or underexplored problems. Evaluate how novel each problem is relative to the other problems in the batch.
 
-**Output**: Comparative ranking of data moat strength across all ideas in the set.
+**What to Consider:**
+- Is this problem frequently addressed by startups, or is it underexplored?
+- How many other ideas in this batch address similar problems?
+- Does the idea identify a problem that others haven't recognized?
+- Is the problem framing itself innovative (seeing an old problem in a new way)?
+- Does the problem exist in an emerging space (new technology, regulation, behavior)?
 
----
-
-## Task 4: Switching Cost Analysis
-
-**Purpose**: Evaluate the barriers that would prevent users from switching to alternatives.
-
-**Evaluation Focus**:
-- Would the idea create deep integration into customer workflows or tech stacks?
-- Would users accumulate data that is difficult to export or use elsewhere?
-- Would users invest in learning curves that don't transfer to alternatives?
-- Would the idea create social graph lock-in or relationship dependencies?
-- How do switching costs compare across ideas in the set?
-
-**Output**: Comparative ranking of switching cost potential across all ideas in the set.
+**Evaluation Goal:** Ideas solving problems that no other idea in the batch addresses should score higher. Ideas solving the same problem as others should share their problem-novelty score.
 
 ---
 
-## Task 5: Scale Economy Assessment
+## Task 3: Solution Approach Distinctiveness
 
-**Purpose**: Evaluate whether each idea benefits from scale in defensible ways.
+**Purpose:** Evaluate how unique each idea's solution approach is compared to others.
 
-**Evaluation Focus**:
-- Does the idea have supply-side economies (unit costs decrease with volume)?
-- Does it have demand-side economies (value increases with customer base)?
-- Does it have infrastructure economies (fixed cost investments create ongoing advantages)?
-- How significant are these scale advantages relative to other ideas in the set?
-- Which ideas have commodity economics with no scale benefits?
+**Description:** Even ideas solving similar problems may use radically different solution approaches. Compare the technical and strategic approaches across all ideas to determine which have truly distinctive methods.
 
-**Output**: Comparative ranking of scale economy potential across all ideas in the set.
+**What to Consider:**
+- What technologies or methods does each solution employ?
+- Are multiple ideas using similar technical stacks or architectures?
+- Does any idea use an unconventional or unexpected approach to its problem?
+- Is the solution approach hard to categorize or does it create a new category?
+- Does the approach combine elements from different domains in novel ways?
 
----
-
-## Task 6: Dominance Relationship Detection
-
-**Purpose**: Identify whether any ideas in the set are clearly superior to or dominated by others.
-
-**Evaluation Focus**:
-- Does any idea solve the same problem more effectively than another idea in the set?
-- Does any idea address a superset of another idea's use cases?
-- Would any idea likely absorb another idea's market share over time?
-- Are there clear winner-loser relationships within the set?
-- Which ideas occupy independent spaces with no dominance relationships?
-
-**Output**: Identify dominating and dominated ideas, adjusting scores accordingly (dominated ideas receive lower scores; dominating ideas receive higher scores).
+**Evaluation Goal:** Ideas with solution approaches unlike any other in the batch should score higher. Ideas using common approaches (yet another AI chatbot, yet another marketplace) should receive lower relative scores.
 
 ---
 
-## Task 7: Category Position Analysis
+## Task 4: Target Market Differentiation
 
-**Purpose**: Evaluate whether ideas are creating new categories or competing within existing ones.
+**Purpose:** Assess how distinct each idea's target market is from the others.
 
-**Evaluation Focus**:
-- Is this idea attempting to create a new category or compete in an existing one?
-- For category creators: How distinct is the new category from existing categories?
-- For category competitors: How crowded is the category and what is the competitive intensity?
-- Among ideas in the set, which are competing in the same category vs. different categories?
-- Which ideas have the clearest blue ocean positioning (uncontested market space)?
+**Description:** Compare the intended customers across all ideas. Ideas targeting the same market segments compete more directly than those targeting different segments.
 
-**Output**: Comparative assessment of category positioning—rewarding category creators and penalizing ideas in crowded red ocean competition.
+**What to Consider:**
+- What specific customer segment does each idea target?
+- Are there multiple ideas targeting the same segment (e.g., enterprise SaaS, Gen Z consumers)?
+- How narrow or specific is each idea's target market definition?
+- Does any idea target an underserved or overlooked market?
+- Would the target customers of different ideas ever be the same people/companies?
 
----
-
-## Task 8: Positional Clarity Evaluation
-
-**Purpose**: Assess how clearly and sharply each idea defines its competitive position.
-
-**Evaluation Focus**:
-- Does the idea have a clear target customer (knows who it's for and who it's not for)?
-- Does it have an unambiguous value proposition (explainable in one sentence)?
-- Is the positioning consistent (all elements reinforce the same position)?
-- Does the idea avoid trying to be everything to everyone?
-- How does positional clarity compare across ideas in the set?
-
-**Output**: Comparative ranking of positional clarity across all ideas in the set.
+**Evaluation Goal:** Ideas targeting unique, non-overlapping markets should score higher. Ideas competing for the same customers should share their target-market differentiation value.
 
 ---
 
-## Task 9: Technical Pivot Barrier Assessment
+## Task 5: Network Effects Potential
 
-**Purpose**: Evaluate how hard it would be for other ideas in the set to pivot and replicate each idea's technical approach.
+**Purpose:** Evaluate which ideas have the potential for network effects that create defensible moats.
 
-**Evaluation Focus**:
-- Does the idea require deep technical capabilities that take years to develop?
-- Are the technical requirements shallow and easily copied?
-- Is the technology commoditized with no real barriers?
-- For each idea, how difficult would it be for the OTHER ideas in the set to pivot toward it?
-- Which ideas have the strongest technical moats relative to this specific competitive set?
+**Description:** Compare the structural potential for network effects across all ideas. Ideas with strong network effect potential have inherent defensibility that compounds over time.
 
-**Output**: For each idea, assess the technical barriers that protect it from the other ideas in the set pivoting into its space.
+**What to Consider:**
+- Does the product become more valuable as more users join?
+- Are there two-sided marketplace dynamics that create lock-in?
+- Does user-generated content or data create compounding value?
+- Would users have reasons to invite or depend on other users?
+- How strong are the network effects compared to other ideas in the batch?
 
----
-
-## Task 10: Domain Expertise Barrier Assessment
-
-**Purpose**: Evaluate the domain knowledge requirements that protect each idea from competitive pivots.
-
-**Evaluation Focus**:
-- Does the idea require deep regulatory expertise that takes years to acquire?
-- Does it require industry relationships and trust built over time?
-- Does it require specialized knowledge from years of domain experience?
-- For each idea, would the OTHER ideas in the set struggle to acquire necessary domain expertise?
-- Which ideas have the highest domain expertise barriers relative to this specific competitive set?
-
-**Output**: For each idea, assess the domain expertise barriers that protect it from the other ideas in the set pivoting into its space.
+**Evaluation Goal:** Ideas with stronger network effect potential should receive higher relative defensibility scores. Ideas with no network effects should receive lower scores on this dimension.
 
 ---
 
-## Task 11: Business Model Barrier Assessment
+## Task 6: Technical Moat Depth
 
-**Purpose**: Evaluate whether business model structures would prevent ideas from pivoting toward each other.
+**Purpose:** Assess the technical complexity and barriers to replication for each idea.
 
-**Evaluation Focus**:
-- Would pivoting toward this idea create conflicting incentives for other ideas in the set?
-- Would it threaten existing channel relationships of other ideas?
-- Would it require cultural changes that other ideas' organizations couldn't make?
-- Which ideas have business models that are structurally protected from competition by others in the set?
+**Description:** Compare the technical defensibility across all ideas. Some ideas require deep technical expertise, proprietary algorithms, unique data, or years of R&D that competitors cannot easily replicate.
 
-**Output**: For each idea, assess the business model barriers that protect it from the other ideas in the set pivoting into its space.
+**What to Consider:**
+- Does the solution require rare technical expertise?
+- Is there significant R&D or engineering complexity?
+- Does the idea depend on proprietary data or unique data access?
+- Are there patents, trade secrets, or algorithmic innovations?
+- How long would it take a well-funded competitor to replicate the technology?
+- How do the technical moats compare across all ideas in the batch?
 
----
-
-## Task 12: Resource and Time Barrier Assessment
-
-**Purpose**: Evaluate the capital, time, and talent requirements that would prevent competitive pivots.
-
-**Evaluation Focus**:
-- Does the idea require significant capital investment that others in the set may not have?
-- Does it have first-mover dynamics that create lasting advantages?
-- Does it require specialized talent that is scarce?
-- How do resource requirements compare across ideas in the set?
-- Which ideas could be easily replicated with minimal resources by others in the set?
-
-**Output**: For each idea, assess the resource and time barriers that protect it from the other ideas in the set pivoting into its space.
+**Evaluation Goal:** Ideas with deeper technical moats should score higher on defensibility. Ideas using commodity technology should score lower relative to others with technical advantages.
 
 ---
 
-## Task 13: Holistic Differentiation Synthesis
+## Task 7: Regulatory and Compliance Barrier Evaluation
 
-**Purpose**: Synthesize all dimension scores into a final comparative ranking that represents genuine competitive differentiation.
+**Purpose:** Identify which ideas operate in spaces with high regulatory barriers that protect incumbents.
 
-**Evaluation Focus**:
-- Integrate uniqueness, defensibility, positioning, and pivot barrier assessments
-- Weight the interrelationships (uniqueness without defensibility is ephemeral; defensibility without uniqueness is meaningless)
-- Produce a probability distribution that sums to ~1
-- Ensure the distribution reflects the relative competitive positioning of each idea
-- Handle edge cases: homogeneous sets should produce flat distributions; heterogeneous sets should evaluate standalone potential
+**Description:** Compare the regulatory environments across all ideas. Ideas in heavily regulated spaces (healthcare, finance, education, transportation) have natural moats that competitors must also navigate.
 
-**Output**: Final probability distribution across all ideas in the set, representing relative competitive differentiation. Higher scores indicate more differentiated and defensible positions.
+**What to Consider:**
+- Does the idea operate in a regulated industry?
+- Are there licenses, certifications, or approvals required?
+- Has the team demonstrated understanding of regulatory requirements?
+- Would new entrants face significant compliance costs?
+- How do regulatory barriers compare across all ideas in the batch?
+
+**Evaluation Goal:** Ideas in regulated spaces with demonstrated compliance understanding should score higher on defensibility. Ideas in unregulated commodity markets should score lower on this dimension.
 
 ---
 
-## Task Interdependencies
+## Task 8: Switching Cost and Lock-in Assessment
 
-The tasks above build upon each other:
+**Purpose:** Evaluate the switching costs and ecosystem lock-in potential for each idea.
 
-1. **Foundation Layer** (Tasks 1-5): Establish the raw differentiation signals
-   - Conceptual territory mapping
-   - Moat assessments (network effects, data, switching costs, scale)
+**Description:** Compare how sticky each product would be once adopted. Ideas that integrate deeply into customer workflows, accumulate valuable customer data, or create high switching costs have stronger defensibility.
 
-2. **Comparative Layer** (Tasks 6-8): Evaluate relative positioning within the set
-   - Dominance relationships
-   - Category positioning
-   - Positional clarity
+**What to Consider:**
+- How deeply does the product integrate into existing workflows?
+- Would customers lose valuable data or history by switching?
+- Are there network effects within the customer's organization?
+- How painful would migration to a competitor be?
+- How do switching costs compare across all ideas in the batch?
 
-3. **Protection Layer** (Tasks 9-12): Assess barriers against competitive convergence
-   - Technical pivot barriers
-   - Domain expertise barriers
-   - Business model barriers
-   - Resource/time barriers
+**Evaluation Goal:** Ideas with higher switching costs and deeper integration should score higher. Ideas that are easy to replace should score lower on this dimension.
 
-4. **Synthesis Layer** (Task 13): Combine all signals into final distribution
-   - Weighted integration of all dimensions
-   - Normalization to probability distribution
+---
 
-The function must evaluate all ideas simultaneously, not in isolation. Each task produces comparative assessments that inform the final probability distribution output.
+## Task 9: Value Proposition Clarity Comparison
+
+**Purpose:** Compare how clearly each idea articulates its value proposition.
+
+**Description:** Evaluate the clarity, specificity, and crispness of each idea's value proposition relative to others. Clear value propositions signal deep market understanding and strong positioning.
+
+**What to Consider:**
+- Can the idea be summarized in one clear sentence?
+- Is the target customer and benefit immediately apparent?
+- Is there buzzword inflation or vague language?
+- Does the pitch demonstrate specific understanding of customer pain?
+- How does the clarity compare across all ideas in the batch?
+
+**Evaluation Goal:** Ideas with crystal-clear value propositions should score higher on competitive positioning. Ideas with vague or confusing pitches should score lower.
+
+---
+
+## Task 10: Strategic Coherence Evaluation
+
+**Purpose:** Assess whether each idea's strategy is internally coherent and well-reasoned.
+
+**Description:** Compare the strategic coherence across all ideas. A coherent strategy aligns target market, solution approach, go-to-market, and business model in ways that reinforce each other.
+
+**What to Consider:**
+- Does the target market match the product approach?
+- Is the go-to-market strategy appropriate for the customer segment?
+- Does the business model make sense for the solution type?
+- Are there contradictions or misalignments in the strategy?
+- How does strategic coherence compare across all ideas?
+
+**Evaluation Goal:** Ideas with fully coherent strategies should score higher. Ideas with strategic contradictions or misalignments should score lower relative to others.
+
+---
+
+## Task 11: Market Timing Assessment
+
+**Purpose:** Evaluate whether each idea is well-timed for current market conditions.
+
+**Description:** Compare market timing across all ideas. Ideas that are too early face education costs; ideas that are too late face entrenched competition. The best-timed ideas identify inflection points.
+
+**What to Consider:**
+- Is there a recent change (technology, regulation, behavior) enabling this idea now?
+- Is the market ready for this solution, or does it require education?
+- Are incumbents already established in this space?
+- Is there evidence of market pull (emerging demand, failed predecessors)?
+- How does market timing compare across all ideas in the batch?
+
+**Evaluation Goal:** Ideas with superior market timing should score higher on competitive positioning. Ideas that are mistimed (too early or too late) should score lower.
+
+---
+
+## Task 12: Execution Credibility Signals
+
+**Purpose:** Assess signals of execution capability evident in each pitch.
+
+**Description:** Compare execution credibility across all ideas based on the quality, specificity, and confidence of the pitches. Well-prepared pitches with specific plans signal teams that can deliver.
+
+**What to Consider:**
+- Is the pitch well-prepared and professional?
+- Are there specific metrics, milestones, or plans mentioned?
+- Does the pitch demonstrate deep domain expertise?
+- In audio/video: Is the delivery confident and competent?
+- How does execution credibility compare across all ideas?
+
+**Evaluation Goal:** Ideas demonstrating stronger execution credibility should score higher. Ideas with weak or poorly-prepared pitches should score lower on this dimension.
+
+---
+
+## Task 13: Technical Pivot Barrier Analysis
+
+**Purpose:** Evaluate how hard it would be for other ideas in the batch to pivot into each idea's technical space.
+
+**Description:** For each idea, assess how difficult it would be for the other ideas to acquire the technical capabilities needed to compete directly. High technical pivot barriers protect differentiation.
+
+**What to Consider:**
+- Would competitors need entirely different technical stacks?
+- Would they need to hire different kinds of engineers?
+- Would they need years of R&D to build comparable technology?
+- Would they need access to data they don't have?
+- How asymmetric are the technical pivot barriers between ideas?
+
+**Evaluation Goal:** Ideas that are technically hard for others to pivot into should score higher. Ideas that others could easily expand into should score lower.
+
+---
+
+## Task 14: Market Pivot Barrier Analysis
+
+**Purpose:** Evaluate how hard it would be for other ideas to pivot into each idea's market position.
+
+**Description:** For each idea, assess how difficult it would be for others to build the customer relationships, brand positioning, and go-to-market capabilities to compete directly.
+
+**What to Consider:**
+- Would competitors need entirely different customer relationships?
+- Would they need different brand positioning or marketing approaches?
+- Would they need different sales motions or distribution channels?
+- Would they confuse their existing customers by pivoting?
+- How asymmetric are the market pivot barriers between ideas?
+
+**Evaluation Goal:** Ideas that are hard for others to pivot into from a market perspective should score higher. Ideas that are easy to expand into should score lower.
+
+---
+
+## Task 15: Strategic Pivot Barrier Analysis
+
+**Purpose:** Evaluate how hard it would be for other ideas to pivot into each idea's strategic space.
+
+**Description:** For each idea, assess whether others could strategically justify a pivot into this space without abandoning their core identity, confusing investors, or diluting focus.
+
+**What to Consider:**
+- Would a pivot make strategic sense for other ideas, or would it be a distraction?
+- Would pivoting require abandoning current strategic positioning?
+- Would a pivot confuse existing investors or stakeholders?
+- Is the strategic distance too great for a credible pivot?
+- How asymmetric are the strategic pivot barriers between ideas?
+
+**Evaluation Goal:** Ideas that are strategically isolated from others should score higher. Ideas that are natural pivot targets for others should score lower.
+
+---
+
+## Task 16: Similarity Clustering and Duplicate Detection
+
+**Purpose:** Identify clusters of similar ideas and near-duplicates that should share differentiation value.
+
+**Description:** Group ideas that are highly similar to each other. Ideas within a cluster compete directly and should split their combined differentiation value. Isolated ideas outside clusters retain their full differentiation.
+
+**What to Consider:**
+- Are any ideas essentially duplicates or near-duplicates?
+- Are there clusters of ideas targeting the same market with similar approaches?
+- How many distinct competitive spaces are represented in the batch?
+- Which ideas stand alone, and which exist in crowded clusters?
+
+**Evaluation Goal:** Identify the cluster structure of the batch to ensure similar ideas share differentiation value appropriately.
+
+---
+
+## Task 17: Holistic Differentiation Synthesis
+
+**Purpose:** Combine all evaluation dimensions into a final relative differentiation ranking.
+
+**Description:** Synthesize scores from all previous tasks—uniqueness, defensibility, competitive positioning, and pivot barriers—into a single probability distribution that represents overall competitive differentiation.
+
+**What to Consider:**
+- How do the four pillars (uniqueness, defensibility, positioning, pivot barriers) combine?
+- Are there ideas that score highly on some dimensions but poorly on others?
+- Which ideas have the most balanced, robust differentiation?
+- How should the scores be normalized to sum to ~1?
+
+**Evaluation Goal:** Produce a final probability distribution where each score represents the idea's share of total differentiation value in the batch.
+
+---
+
+## Summary
+
+The Competitive Differentiation Ranker performs 17 key tasks:
+
+| # | Task | Pillar |
+|---|------|--------|
+| 1 | Conceptual Territory Mapping | Relative Uniqueness |
+| 2 | Problem Novelty Assessment | Relative Uniqueness |
+| 3 | Solution Approach Distinctiveness | Relative Uniqueness |
+| 4 | Target Market Differentiation | Relative Uniqueness |
+| 5 | Network Effects Potential | Defensibility |
+| 6 | Technical Moat Depth | Defensibility |
+| 7 | Regulatory and Compliance Barriers | Defensibility |
+| 8 | Switching Cost and Lock-in | Defensibility |
+| 9 | Value Proposition Clarity | Competitive Positioning |
+| 10 | Strategic Coherence | Competitive Positioning |
+| 11 | Market Timing Assessment | Competitive Positioning |
+| 12 | Execution Credibility Signals | Competitive Positioning |
+| 13 | Technical Pivot Barriers | Pivot Barriers |
+| 14 | Market Pivot Barriers | Pivot Barriers |
+| 15 | Strategic Pivot Barriers | Pivot Barriers |
+| 16 | Similarity Clustering | Cross-Cutting |
+| 17 | Holistic Differentiation Synthesis | Integration |
+
+Each task evaluates all ideas simultaneously and contributes to the final probability distribution output.

@@ -1,48 +1,53 @@
 {
   "type": "vector.function",
-  "description": "Rank startup ideas by relative competitive differentiation. Evaluates a set of ideas simultaneously, assessing uniqueness, defensibility, competitive positioning, and pivot barriers. Returns a probability distribution where higher scores indicate more differentiated and defensible positions. Scores sum to approximately 1.",
+  "description": "Evaluate a batch of startup ideas for relative competitive differentiation. Produces a probability distribution (scores summing to ~1) where each score represents the idea's share of total differentiation value. Higher scores indicate ideas that occupy more unique, defensible, and strategically distinct positions relative to others in the batch. Evaluates four dimensions: relative uniqueness (conceptual territory), defensibility (moats and barriers), competitive positioning (clarity and coherence), and pivot barriers (how hard for others to enter this space). Accepts text, image, audio, video, or composite pitches.",
   "input_schema": {
     "type": "object",
-    "description": "Input for the competitive differentiation ranker. Accepts an array of startup ideas to compare.",
+    "description": "A batch of startup ideas to evaluate for relative competitive differentiation",
     "properties": {
       "items": {
         "type": "array",
-        "description": "An array of startup ideas to evaluate for relative competitive differentiation. Each item can be a text pitch, an image/audio/video pitch, or a composite array combining multiple media types.",
+        "description": "Array of startup ideas to compare. Each idea can be a text pitch, image, audio, video, or composite (array of multiple formats). Requires at least 2 items to perform meaningful comparison.",
         "minItems": 2,
         "items": {
           "anyOf": [
             {
               "type": "string",
-              "description": "A text description of a startup idea (elevator pitch, description, etc.)"
+              "description": "A text-based startup pitch (elevator pitch, one-pager summary, etc.)"
             },
             {
               "type": "image",
-              "description": "An image-based pitch (pitch deck slide, infographic, etc.)"
+              "description": "An image-based pitch (pitch deck slide, product mockup, market diagram, etc.)"
             },
             {
               "type": "audio",
-              "description": "An audio pitch (verbal pitch recording, podcast, etc.)"
+              "description": "An audio pitch (verbal elevator pitch, podcast-style explanation, etc.)"
             },
             {
               "type": "video",
-              "description": "A video pitch (demo video, pitch presentation, etc.)"
+              "description": "A video pitch (demo video, founder pitch, product walkthrough, etc.)"
             },
             {
               "type": "array",
-              "description": "A composite pitch combining multiple media types",
+              "description": "A composite pitch combining multiple formats",
+              "minItems": 1,
               "items": {
                 "anyOf": [
                   {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Text component of composite pitch"
                   },
                   {
-                    "type": "image"
+                    "type": "image",
+                    "description": "Image component of composite pitch"
                   },
                   {
-                    "type": "audio"
+                    "type": "audio",
+                    "description": "Audio component of composite pitch"
                   },
                   {
-                    "type": "video"
+                    "type": "video",
+                    "description": "Video component of composite pitch"
                   }
                 ]
               }
@@ -55,6 +60,7 @@
       "items"
     ]
   },
+  "input_maps": [],
   "tasks": [
     {
       "type": "vector.completion",
@@ -155,6 +161,58 @@
       ],
       "responses": {
         "$starlark": "[[{'type': 'text', 'text': 'IDEA ' + str(i+1) + ' is most protected from competitive pivots'}] for i in range(len(input['items']))]"
+      },
+      "output": {
+        "$starlark": "output['scores']"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are an expert at identifying similarity and clustering among startup ideas. Your task is to find the idea that is MOST DIFFERENTIATED and ISOLATED from others - the idea that stands ALONE without similar competitors in this batch.\n\nConsider:\n- Are any ideas targeting the same market with similar approaches?\n- Are there clusters of ideas that would compete directly?\n- Which ideas are essentially variations of the same concept?\n- Which ideas exist in crowded clusters vs. standing alone?\n\nVote for the idea that is MOST ISOLATED from others - the idea that has NO similar competitors in this batch. Ideas that exist in crowded clusters should NOT receive votes.\n\nYou will be shown multiple startup ideas. Vote for the idea with the MOST differentiation from others in this specific set."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": {
+            "$starlark": "def format_items(items):\n    has_multimodal = False\n    for item in items:\n        if type(item) != 'string':\n            has_multimodal = True\n            break\n    if not has_multimodal:\n        text = 'Identify which idea is MOST ISOLATED and DIFFERENTIATED from others in this batch:\\n\\n'\n        for i, item in enumerate(items):\n            text += 'IDEA ' + str(i+1) + ':\\n' + item + '\\n\\n'\n        return [{'type': 'text', 'text': text.rstrip()}]\n    else:\n        result = [{'type': 'text', 'text': 'Identify which idea is MOST ISOLATED and DIFFERENTIATED from others in this batch:\\n\\n'}]\n        for i, item in enumerate(items):\n            if type(item) == 'string':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n' + item + '\\n\\n'})\n            elif type(item) == 'dict':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n'})\n                result.append(item)\n                result.append({'type': 'text', 'text': '\\n\\n'})\n            elif type(item) == 'list':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n'})\n                for part in item:\n                    if type(part) == 'string':\n                        result.append({'type': 'text', 'text': part})\n                    else:\n                        result.append(part)\n                result.append({'type': 'text', 'text': '\\n\\n'})\n        return result\n\nformat_items(input['items'])"
+          }
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{'type': 'text', 'text': 'IDEA ' + str(i+1) + ' is most isolated and differentiated from others in this batch'}] for i in range(len(input['items']))]"
+      },
+      "output": {
+        "$starlark": "output['scores']"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are an expert startup analyst making a FINAL HOLISTIC ASSESSMENT of competitive differentiation. Consider all dimensions:\n\n1. UNIQUENESS: Which ideas occupy distinct conceptual territory?\n2. DEFENSIBILITY: Which have structural moats and barriers to competition?\n3. POSITIONING: Which have clear, credible competitive positioning?\n4. PIVOT BARRIERS: Which are protected from others pivoting into their space?\n5. ISOLATION: Which stand alone vs. exist in crowded clusters?\n\nVote for the idea with the STRONGEST OVERALL DIFFERENTIATION. This idea should stand apart from all others across multiple dimensions.\n\nYou will be shown multiple startup ideas. Vote for the single idea that is most differentiated overall."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": {
+            "$starlark": "def format_items(items):\n    has_multimodal = False\n    for item in items:\n        if type(item) != 'string':\n            has_multimodal = True\n            break\n    if not has_multimodal:\n        text = 'Make a FINAL HOLISTIC assessment of competitive differentiation:\\n\\n'\n        for i, item in enumerate(items):\n            text += 'IDEA ' + str(i+1) + ':\\n' + item + '\\n\\n'\n        return [{'type': 'text', 'text': text.rstrip()}]\n    else:\n        result = [{'type': 'text', 'text': 'Make a FINAL HOLISTIC assessment of competitive differentiation:\\n\\n'}]\n        for i, item in enumerate(items):\n            if type(item) == 'string':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n' + item + '\\n\\n'})\n            elif type(item) == 'dict':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n'})\n                result.append(item)\n                result.append({'type': 'text', 'text': '\\n\\n'})\n            elif type(item) == 'list':\n                result.append({'type': 'text', 'text': 'IDEA ' + str(i+1) + ':\\n'})\n                for part in item:\n                    if type(part) == 'string':\n                        result.append({'type': 'text', 'text': part})\n                    else:\n                        result.append(part)\n                result.append({'type': 'text', 'text': '\\n\\n'})\n        return result\n\nformat_items(input['items'])"
+          }
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{'type': 'text', 'text': 'IDEA ' + str(i+1) + ' is most differentiated overall'}] for i in range(len(input['items']))]"
       },
       "output": {
         "$starlark": "output['scores']"

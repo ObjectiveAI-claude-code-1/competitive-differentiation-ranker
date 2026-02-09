@@ -1,83 +1,105 @@
 # Competitive Differentiation Ranker
 
-A vector function that evaluates startup ideas simultaneously to assess their relative differentiation and defensibility within a competitive set.
+A vector function that evaluates a batch of startup ideas for relative competitive differentiation, producing a probability distribution where each score represents an idea's share of total differentiation value.
 
 ## Overview
 
-This function takes a set of startup ideas and returns a probability distribution representing their relative competitive differentiation. Unlike functions that evaluate items in isolation, this function embraces an inherently comparative paradigm—recognizing that competitive positioning is fundamentally relational.
+Unlike traditional evaluation functions that score items in isolation, this function compares all startup ideas simultaneously to determine which occupy the most unique, defensible, and strategically distinct positions relative to others in the batch.
 
 ## Input
 
-The input is an object with an `items` field containing an array of startup ideas to compare:
+The function accepts an object with an `items` array containing startup ideas:
 
 ```json
 {
   "items": [
-    "An AI-powered personal stylist.",
-    "A decentralized tutoring marketplace.",
-    "Yet another to-do list app with gamification."
+    "Text pitch for startup A...",
+    "Text pitch for startup B...",
+    {"type": "image_url", "image_url": {"url": "https://example.com/pitch-deck.png"}},
+    ["Composite pitch", {"type": "video_url", "video_url": {"url": "https://example.com/demo.mp4"}}]
   ]
 }
 ```
 
 Each item can be:
-- A **string** (text pitch)
-- An **image**, **audio**, or **video** (multimodal pitch)
-- An **array** of the above (composite pitch combining multiple media)
+- **Text**: A text-based startup pitch (string)
+- **Image**: A pitch deck slide, product mockup, or diagram
+- **Audio**: A verbal elevator pitch
+- **Video**: A demo video or founder pitch
+- **Composite**: An array combining multiple formats
+
+**Minimum 2 items required** for meaningful comparison.
 
 ## Output
 
-A vector of scores (one per item) summing to approximately 1, representing relative competitive differentiation. Higher scores indicate more differentiated and defensible positions within the set.
+A vector of scores (one per item) summing to approximately 1:
 
-For example, the input above might produce:
 ```json
-[0.35, 0.45, 0.20]
+[0.35, 0.25, 0.20, 0.15, 0.05]
 ```
 
-This indicates that the decentralized tutoring marketplace has the highest differentiation, followed by the AI stylist, with the to-do list app having the lowest differentiation.
+Higher scores indicate ideas that are more differentiated from others in the batch.
 
 ## Evaluation Criteria
 
-The function evaluates all ideas relative to each other across four dimensions:
+The function evaluates ideas across six dimensions organized into four pillars:
 
 ### 1. Relative Uniqueness
-Which ideas occupy unique conceptual territory versus overlapping space? Considers:
 - Novel problem framing vs. conventional approaches
 - Unexplored domain intersections
-- Paradigm challenges vs. accepting industry orthodoxy
-- Substitutability between ideas in the set
+- How far the idea sits from the "centroid" of the batch
 
 ### 2. Defensibility and Moats
-Which ideas have structural advantages that protect their position over time? Considers:
-- Network effects (direct, indirect, data)
-- Data moats (proprietary, compounding, defensible data)
-- Switching costs (integration depth, data portability, learning curves)
+- Network effects potential
+- Data moats and proprietary advantages
+- Switching costs and lock-in
 - Economies of scale
-- Brand and trust advantages
 
 ### 3. Competitive Positioning
-Which ideas have the strongest competitive position within this specific set? Considers:
-- Dominance relationships (is any idea clearly superior to others?)
-- Category creation vs. category competition
-- Blue ocean vs. red ocean dynamics
-- Positional clarity
+- Value proposition clarity
+- Strategic coherence
+- Market timing
+- Category creation vs. competition in crowded markets
 
-### 4. Cross-Idea Pivot Barriers
-How hard would it be for other ideas in the set to pivot into each idea's space? Considers:
-- Technical barriers
-- Domain expertise barriers
-- Business model barriers
-- Resource and time barriers
+### 4. Pivot Barriers
+- Technical barriers to replication
+- Domain expertise requirements
+- Business model conflicts
+- First-mover advantages
+
+### 5. Isolation Analysis
+- Cluster identification
+- Similarity detection
+- Which ideas stand alone vs. exist in crowded clusters
+
+### 6. Holistic Assessment
+- Overall differentiation across all dimensions
 
 ## Use Cases
 
-- **Investor Portfolio Screening**: Rapidly identify the most differentiated ideas in a batch
-- **Startup Competitive Analysis**: Understand relative positioning against competitors
-- **Accelerator Cohort Selection**: Ensure diversity of positioning in selected cohorts
-- **Strategic Pivot Analysis**: Compare current positioning against alternative directions
+- **Investor Screening**: Quickly identify the most differentiated ideas in a batch of pitches
+- **Accelerator Selection**: Evaluate cohort applicants for competitive overlap
+- **Portfolio Analysis**: Assess differentiation within an existing portfolio
+- **Competition Mapping**: Understand relative positioning of market players
+- **Ideation Ranking**: Prioritize new product concepts by differentiation potential
 
-## Behavior Notes
+## Interpretation
 
-- **Homogeneous sets**: When all ideas are similar, the function produces a relatively flat distribution, signaling that true differentiation is absent.
-- **Dominant ideas**: When one idea clearly outclasses others, it will receive a significantly higher score.
-- **Heterogeneous sets**: When ideas are in completely different domains, each is evaluated on its standalone differentiation potential.
+- **High Concentration** (one idea with 0.8+): One standout in a batch of similar ideas
+- **Uniform Distribution** (~0.2 each for 5 ideas): All ideas are equally differentiated
+- **Clustered Scores**: Groups of similar ideas sharing differentiation value
+
+## Example
+
+```json
+{
+  "items": [
+    "AI chatbot for customer support. SaaS model.",
+    "AI chatbot for customer service. Uses GPT-4.",
+    "Customer support automation using AI.",
+    "Blockchain supply chain tracking for luxury goods."
+  ]
+}
+```
+
+Expected output: Ideas 1-3 share a smaller portion (they're similar), while idea 4 gets a larger share (unique in this batch).
